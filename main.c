@@ -1,8 +1,13 @@
-/*
- * CONFIGURATION
- *
- * 
- */
+//****************************************************************************
+//Filename:		main.c
+//Author:		Stephen West
+//Date:  		2-18-2018
+//Version:		1.0
+//Device:		pic18LF4620
+//Description:	practice programming on pic mcu
+//Complier:		XC8
+//
+//****************************************************************************
 
 // CONFIG1H
 // CONFIG1H
@@ -81,101 +86,60 @@
 
 #include <stdint.h>        /* For uint8_t definition */
 #include <stdbool.h>       /* For true/false definition */
+#include <string.h>         /*For uart*/
 
 #endif
 
 //#include "system.h"        /* System funct/params, like osc/peripheral config */
-//#include "user.h"          /* User funct/params, such as InitApp */
+#include "user.h"          /* User funct/params, such as InitApp */
 
 
-/// defines to be put in headers
 
-#define SYS_FREQ        8000000L
-#define FCY             SYS_FREQ/4
 
-// timer defines
-#define TMR0_IF         INTCONbits.TMR0IF
-#define TMR0L           TMR0L
-#define TMR0_ON         T0CONbits.TMR0ON
-
-// int 0 defines
-#define INT0_IF         INTCONbits.INT0IF
-#define INT0_ON         INTCONbits.INT0IE
-
-#define YLED            LATDbits.LATD2
-#define RLED            LATDbits.LATD3
 /******************************************************************************/
 /* User Global Variable Declaration                                           */
 /******************************************************************************/
 
 /* i.e. uint8_t <variable_name>; */
 
+
+
+/******************************************************************************/
+/* function decs to be put in header                                                        */
+/******************************************************************************/
+
+
+
+
+
 /******************************************************************************/
 /* Main Program                                                               */
 /******************************************************************************/
 
+
+
+
+
 void main(void)
 {
-    /*CONFIGURE OSCILLATOR*/
-    // set oscillator to 8MHz
-    OSCCONbits.IRCF2 = 1;
-    OSCCONbits.IRCF1 = 1;
-    OSCCONbits.IRCF0 = 1;
     
-    /*
-    Set IO
-    */
+    initApp();
+    uartInit();
+    bootMsg();
     
-    // set pin 21 as output
-    TRISDbits.RD2 = 0;  
-    YLED = 1;
+    uint32_t counter = 0;
     
-    // set pin 22 as output
-    TRISDbits.RD3 = 0;
-    RLED = 0;
-    
-    int32_t counter = 0;
-    
-    /**
-     * enable interrupts 
-     */
-       
-    RCONbits.IPEN = 1; //  priority levels on interrupts
-
-    
-    // TIMER0 ISR
-    INTCON2bits.TMR0IP  = 1; //timeer0 is high priority
-    INTCONbits.TMR0IE = 1; // Enable the TMR0 overflow interrupt
-    T0CONbits.TMR0ON = 1; // Enable timer 0 
-    T0CONbits.T08BIT = 1; // timer0 is 8 bir timer/counter
-    T0CONbits.T0CS = 0; // Transition on fosc/4 pin
-    T0CONbits.T0SE = 0; // increment on low to high transition on T0CKI pin
-    T0CONbits.PSA = 1; // Timer0 pre scalar not assigned
-    TMR0L = 0xfe;
-    /*
-    T0CONbits.T0PS0 = 0; // pre scale bits
-    T0CONbits.T0PS1 = 0;
-    T0CONbits.T0PS2 = 0;
-     */
-    INTCONbits.TMR0IF = 0; // set interrupt flag to 0
-    
-    // INT 0 ISR
-    INTCONbits.INT0IE = 1; // enable int0 external interrupt
-    INTCON2bits.INTEDG0 = 0; // Interrupt on falling edge
-    
-    
-    
-    
-    INTCONbits.GIEH = 1; // Global high priority interrupt enable
-    INTCONbits.GIEL = 1; // Global low priority interrupt enable
-
     while(1)
     {
-        if(counter++ > 1000)
+        if(counter++ > 10000)
         {
             //YLED = ~YLED;
             counter = 0;
-        }
+        }/*
+          * 
+          */
+        
+            
             
     }
 
@@ -197,8 +161,6 @@ void interrupt high_isr(void)
         {
             iii++;
         }*/
-            
-            
         
     }
     
