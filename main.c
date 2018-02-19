@@ -6,10 +6,8 @@
 //Device:		pic18LF4620
 //Description:	practice programming on pic mcu
 //Complier:		XC8
-//
 //****************************************************************************
 
-// CONFIG1H
 // CONFIG1H
 #pragma config OSC = INTIO67    // Oscillator Selection bits (Internal oscillator block, port function on RA6 and RA7)
 #pragma config FCMEN = OFF      // Fail-Safe Clock Monitor Enable bit (Fail-Safe Clock Monitor disabled)
@@ -94,31 +92,21 @@
 #include "user.h"          /* User funct/params, such as InitApp */
 
 
-
-
 /******************************************************************************/
 /* User Global Variable Declaration                                           */
 /******************************************************************************/
 
 /* i.e. uint8_t <variable_name>; */
-
+bool spiWriteFlag = false;
 
 
 /******************************************************************************/
 /* function decs to be put in header                                                        */
 /******************************************************************************/
 
-
-
-
-
 /******************************************************************************/
 /* Main Program                                                               */
 /******************************************************************************/
-
-
-
-
 
 void main(void)
 {
@@ -126,21 +114,26 @@ void main(void)
     initApp();
     uartInit();
     bootMsg();
+    spiConfig();
+    spiDevice potentiometer = dev1;
     
     uint32_t counter = 0;
     
     while(1)
     {
+        
+        if(spiWriteFlag)
+        {
+            spiWriteFlag = false;
+            for(int nnn = 0; nnn < 100; nnn++)
+                spiWrite(potentiometer, 0b00000100);
+            uartTx((char *)"\n\rSPI written");
+        }
         if(counter++ > 10000)
         {
             //YLED = ~YLED;
             counter = 0;
-        }/*
-          * 
-          */
-        
-            
-            
+        }
     }
 
 }
@@ -157,17 +150,13 @@ void interrupt high_isr(void)
             RLED = ~RLED;
             iii = 0;
         }
-        /*else
-        {
-            iii++;
-        }*/
-        
     }
     
     if (INT0_IF && INT0_ON)
     {
         INT0_IF = 0;
         YLED = ~YLED;
+        spiWriteFlag = true;
     }
 }
  

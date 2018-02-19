@@ -112,3 +112,48 @@ void bootMsg(void)
     uartTx((char *)"\rDevice:\t\tpic18LF4620\n");
     uartTx((char *)"\rComplier:\tXC8\n\n");
 }
+
+void spiConfig(void)
+{
+    
+    TRISCbits.RC5 = 0; //SDO must have TRISC<5> bit cleared
+    TRISCbits.RC3 = 0; //SCK (Master mode) must have TRISC<3> bit cleared
+    
+    
+    SSPCON1bits.SSPEN = 1;  //Enables serial port and configures SCK, SDO, SDI and SS as serial port pins
+    SSPCON1bits.CKP = 1;    //Idle state for clock is a high level
+    
+    //SPI Master mode, clock = FOSC/4
+    SSPCON1bits.SSPM3 = 0;
+    SSPCON1bits.SSPM2 = 0;
+    SSPCON1bits.SSPM1 = 0;
+    SSPCON1bits.SSPM0 = 0;
+    
+    TRISDbits.RD0 = 0;
+    CS1 = 1;
+    TRISDbits.RD1 = 0;
+    CS2 = 1;
+            
+    
+}
+
+
+
+void spiWrite(spiDevice dev, uint16_t data)
+{
+    // select what device to write to
+    /*switch(dev)
+    {
+        case dev1:  CS1 = 0;
+        case dev2:  CS2 = 0;
+    }*/
+    CS1 = 0;
+    SSPBUF = (uint8_t)data;
+    CS1 = 1;
+    
+    switch(dev)
+    {
+        case dev1:  CS1 = 1;
+        case dev2:  CS2 = 1;
+    } 
+}

@@ -22,6 +22,18 @@
 #define UART_TX_FLAG    TXSTAbits.TRMT
 #define UART_TX_REG     TXREG
 
+
+
+#define MSSP_BUFF_FLAG  SSPSTATbits.BF
+#define CS1             LATDbits.LATD0
+#define CS2             LATDbits.LATD1
+
+
+typedef enum { dev1, dev2} spiDevice;
+
+
+
+
 /******************************************************************************/
 /* User Function Prototypes                                                   */
 /******************************************************************************/
@@ -35,3 +47,6 @@ void uartPut(uint8_t c);
 void uartTx(char *str);
 
 void bootMsg(void);
+
+void spiConfig(void);
+void spiWrite(spiDevice dev, uint16_t data);
